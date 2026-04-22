@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #29144e;
+  --color-primary-light: #3f2177;
+  --color-primary-soft: #5a3fa3;
+
+  --color-background: #0a0a0f;
+  --color-surface: #1a1a26;
+
+  --color-accent: #9f7cff;
+  --color-accent-green: #1db954;
+
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a1a1aa;
+
+  --color-gradient: linear-gradient(135deg, #29144e, #5a3fa3, #9f7cff);
+  --color-gradient-accent: linear-gradient(135deg, #29144e, #1DB954);
+
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+}
