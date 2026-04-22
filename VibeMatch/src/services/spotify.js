@@ -44,9 +44,7 @@ async function parseResponseBody(response) {
   try {
     return JSON.parse(text);
   } catch {
-    return {
-      rawText: text,
-    };
+    return { rawText: text };
   }
 }
 
@@ -91,7 +89,7 @@ export async function fetchSpotifyProfile() {
 
 export async function fetchRecentlyPlayed() {
   return fetchSpotifyResource(
-    "https://api.spotify.com/v1/me/player/recently-played?limit=10",
+    "https://api.spotify.com/v1/me/player/recently-played?limit=15",
     "Erro ao buscar musicas recentes",
   );
 }
@@ -105,72 +103,18 @@ export async function fetchMyPlaylists() {
 
 export async function fetchTopTracks() {
   return fetchSpotifyResource(
-    "https://api.spotify.com/v1/me/top/tracks?limit=6&time_range=medium_term",
+    "https://api.spotify.com/v1/me/top/tracks?limit=15&time_range=medium_term",
     "Erro ao buscar top musicas",
   );
 }
 
-async function getArtistDetails(artistId, token) {
-  const response = await spotifyFetch(
-    `https://api.spotify.com/v1/artists/${artistId}`,
-    token,
-  );
-  const data = await parseResponseBody(response);
-
-  if (!response.ok) {
-    throw new Error(
-      getResponseErrorMessage(
-        response,
-        data,
-        `Erro ao buscar detalhes do artista ${artistId}`,
-      ),
-    );
-  }
-
-  return data;
-}
-
 export async function fetchTopArtists() {
-  const token = await getValidAccessToken();
-  const response = await spotifyFetch(
-    "https://api.spotify.com/v1/me/top/artists?limit=6&time_range=medium_term",
-    token,
+  const data = await fetchSpotifyResource(
+    "https://api.spotify.com/v1/me/top/artists?limit=15&time_range=medium_term",
+    "Erro ao buscar top artistas",
   );
-  const data = await parseResponseBody(response);
-
-  if (!response.ok) {
-    throw new Error(
-      getResponseErrorMessage(response, data, "Erro ao buscar top artistas"),
-    );
-  }
-
-  if (!data?.items?.length) {
-    return { items: [] };
-  }
-
-  const artistsWithGenres = [];
-
-  for (const artist of data.items) {
-    try {
-      const details = await getArtistDetails(artist.id, token);
-
-      artistsWithGenres.push({
-        ...artist,
-        genres: Array.isArray(details?.genres) ? details.genres : [],
-      });
-    } catch (error) {
-      console.warn(`Nao foi possivel buscar generos de ${artist.name}:`, error.message);
-
-      artistsWithGenres.push({
-        ...artist,
-        genres: Array.isArray(artist?.genres) ? artist.genres : [],
-      });
-    }
-
-    await delay(150);
-  }
 
   return {
-    items: artistsWithGenres,
+    items: Array.isArray(data?.items) ? data.items : [],
   };
 }

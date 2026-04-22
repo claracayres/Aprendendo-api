@@ -2,9 +2,9 @@ import { generateRandomString, generateCodeChallenge } from "../utils/pkce";
 
 const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 const redirectUri = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
+
 const codeVerifierStorageKey = "spotify_code_verifier";
 const authStateStorageKey = "spotify_auth_state";
-const scopeStorageKey = "spotify_auth_scopes";
 const accessTokenStorageKey = "spotify_access_token";
 const refreshTokenStorageKey = "spotify_refresh_token";
 const tokenExpiryStorageKey = "spotify_token_expiry";
@@ -18,16 +18,16 @@ const scopes = [
   "user-top-read",
 ];
 
-function getScopeString() {
-  return scopes.join(" ");
-}
-
 function clearStoredSession() {
   localStorage.removeItem(accessTokenStorageKey);
   localStorage.removeItem(refreshTokenStorageKey);
   localStorage.removeItem(tokenExpiryStorageKey);
   localStorage.removeItem("spotify_user");
-  localStorage.removeItem(scopeStorageKey);
+}
+
+function clearPkceStorage() {
+  localStorage.removeItem(codeVerifierStorageKey);
+  localStorage.removeItem(authStateStorageKey);
 }
 
 async function parseResponseBody(response) {
@@ -46,16 +46,6 @@ async function parseResponseBody(response) {
   }
 }
 
-function clearPkceStorage() {
-  localStorage.removeItem(codeVerifierStorageKey);
-  localStorage.removeItem(authStateStorageKey);
-}
-
-function hasRequiredScopes() {
-  const storedScopes = localStorage.getItem(scopeStorageKey);
-  return storedScopes === getScopeString();
-}
-
 export async function loginWithSpotify() {
   clearStoredSession();
 
@@ -65,13 +55,12 @@ export async function loginWithSpotify() {
 
   localStorage.setItem(codeVerifierStorageKey, codeVerifier);
   localStorage.setItem(authStateStorageKey, state);
-  localStorage.setItem(scopeStorageKey, getScopeString());
 
   const params = new URLSearchParams({
     client_id: clientId,
     response_type: "code",
     redirect_uri: redirectUri,
-    scope: getScopeString(),
+    scope: scopes.join(" "),
     code_challenge_method: "S256",
     code_challenge: codeChallenge,
     state,
@@ -132,6 +121,7 @@ export async function refreshAccessToken() {
   const refreshToken = localStorage.getItem(refreshTokenStorageKey);
 
   if (!refreshToken) {
+    clearStoredSession();
     throw new Error("Refresh token nao encontrado. Faca login novamente.");
   }
 
@@ -161,6 +151,11 @@ export async function refreshAccessToken() {
     );
   }
 
+  if (!data?.access_token) {
+    clearStoredSession();
+    throw new Error("Nao foi possivel renovar a sessao do Spotify.");
+  }
+
   localStorage.setItem(accessTokenStorageKey, data.access_token);
 
   if (data.refresh_token) {
@@ -169,14 +164,10 @@ export async function refreshAccessToken() {
 
   localStorage.setItem(
     tokenExpiryStorageKey,
-    Date.now() + data.expires_in * 1000,
+    String(Date.now() + data.expires_in * 1000),
   );
 
-  if (!hasRequiredScopes()) {
-    localStorage.setItem(scopeStorageKey, getScopeString());
-  }
-
-  return data;
+  return data.access_token;
 }
 
 export function getStoredAccessToken() {
@@ -190,7 +181,7 @@ export function isTokenExpired() {
     return true;
   }
 
-  return Date.now() >= parseInt(expiry, 10);
+  return Date.now() >= Number(expiry);
 }
 
 export function clearSpotifySession() {
@@ -199,22 +190,15 @@ export function clearSpotifySession() {
 }
 
 export async function getValidAccessToken() {
-  const token = getStoredAccessToken();
+  let token = getStoredAccessToken();
 
-  if (!hasRequiredScopes()) {
-    clearSpotifySession();
-    throw new Error("As permissoes do Spotify foram atualizadas. Faça login novamente.");
-  }
-
-  if (!token || isTokenExpired()) {
-    await refreshAccessToken();
-  }
-
-  const validToken = getStoredAccessToken();
-
-  if (!validToken) {
+  if (!token) {
     throw new Error("Sessao de login expirada. Entre com Spotify novamente.");
   }
 
-  return validToken;
+  if (isTokenExpired()) {
+    token = await refreshAccessToken();
+  }
+
+  return token;
 }

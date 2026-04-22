@@ -2,71 +2,72 @@ import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const navigate = useNavigate();
-
+  const user = JSON.parse(localStorage.getItem("spotify_user"));
   function handleLogout() {
-    localStorage.removeItem("spotify_access_token");
-    localStorage.removeItem("spotify_refresh_token");
-    localStorage.removeItem("spotify_token_expiry");
-    localStorage.removeItem("spotify_user");
-    localStorage.removeItem("spotify_code_verifier");
-    localStorage.removeItem("spotify_auth_state");
-    sessionStorage.removeItem("spotify_last_callback_code");
-
+    localStorage.clear();
     navigate("/");
   }
 
   return (
-    <nav
-      style={{
-        width: "100%",
-        padding: "16px 32px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        borderBottom: "1px solid #ddd",
-        marginBottom: "32px",
-        boxSizing: "border-box",
-      }}
-    >
-      <div
-        style={{
-          fontSize: "24px",
-          fontWeight: "700",
-          cursor: "pointer",
-        }}
-        onClick={() => navigate("/dashboard")}
-      >
-        VibeMatch
-      </div>
+    <nav className="sticky top-0 z-50">
+      <div className="mx-auto max-w-7xl px-6 pt-4">
+        <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/40 px-6 py-4 backdrop-blur-xl">
+          {/* LOGO */}
+          <div
+            onClick={() => navigate("/dashboard")}
+            className="cursor-pointer text-xl font-bold text-white"
+          >
+            Vibe
+            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Match
+            </span>
+          </div>
 
-      <div style={{ display: "flex", gap: "12px" }}>
-        <button
-          onClick={() => navigate("/dashboard")}
-          style={{
-            padding: "10px 16px",
-            borderRadius: "8px",
-            border: "1px solid #ccc",
-            background: "white",
-            cursor: "pointer",
-          }}
-        >
-          Dashboard
-        </button>
+          {/* LINKS */}
+          <div className="hidden md:flex items-center gap-6 text-sm text-white/70">
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="hover:text-white transition"
+            >
+              Dashboard
+            </button>
 
-        <button
-          onClick={handleLogout}
-          style={{
-            padding: "10px 16px",
-            borderRadius: "8px",
-            border: "none",
-            background: "#1DB954",
-            color: "white",
-            cursor: "pointer",
-            fontWeight: "600",
-          }}
-        >
-          Logout
-        </button>
+            <button className="hover:text-white transition">Matches</button>
+
+            <button className="hover:text-white transition">Mood</button>
+
+            <button className="hover:text-white transition">Profile</button>
+          </div>
+
+          {/* USER + LOGOUT */}
+          <div className="flex items-center gap-3">
+            {/* USER AVATAR */}
+            <div className="flex items-center gap-2">
+              {user?.images?.[0] ? (
+                <img
+                  src={user.images[0].url}
+                  className="h-9 w-9 rounded-full object-cover"
+                />
+              ) : (
+                <div className="h-9 w-9 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-sm font-bold">
+                  {user?.display_name?.[0] || "U"}
+                </div>
+              )}
+
+              <span className="hidden md:block text-sm text-white/70">
+                {user?.display_name}
+              </span>
+            </div>
+
+            {/* LOGOUT */}
+            <button
+              onClick={handleLogout}
+              className="rounded-full border border-white/15 px-4 py-1.5 text-sm text-white/80 hover:bg-white/10 transition"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
       </div>
     </nav>
   );

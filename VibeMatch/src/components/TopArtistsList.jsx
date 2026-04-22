@@ -1,58 +1,53 @@
 import SectionCard from "./SectionCard";
+import MediaItemCard from "./MediaItemCard";
 
 export default function TopArtistsList({ topArtists }) {
   return (
-    <div style={{ marginBottom: "40px" }}>
-      <h2>Top Artistas</h2>
+    <section className="mb-12">
+      <div className="mb-5 flex items-center justify-between">
+        <div>
+          <p className="text-xs uppercase tracking-[0.2em] text-white/40">
+            Seu ranking
+          </p>
+          <h2 className="text-2xl font-bold text-white">Top artistas</h2>
+        </div>
+      </div>
 
       {topArtists.length > 0 ? (
-        <div>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {topArtists.map((artist, index) => (
             <SectionCard key={artist.id}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                }}
-              >
-                {artist.images?.[0] && (
-                  <img
-                    src={artist.images[0].url}
-                    alt={artist.name}
-                    width="60"
-                    height="60"
-                    style={{ borderRadius: "8px", objectFit: "cover" }}
-                  />
-                )}
-
-                <div>
-                  <p style={{ margin: 0 }}>
-                    <strong>
-                      {index + 1}. {artist.name}
-                    </strong>
-                  </p>
-                  <p
-                    style={{
-                      margin: "6px 0 0",
-                      color: "#333",
-                      fontSize: "14px",
-                      lineHeight: 1.4,
-                    }}
-                  >
-                    <strong>Generos:</strong>{" "}
-                    {artist.genres?.length > 0
-                      ? artist.genres.slice(0, 3).join(", ")
-                      : "Sem generos disponiveis"}
-                  </p>
-                </div>
-              </div>
+              <MediaItemCard
+                image={artist.images?.[0]?.url}
+                title={artist.name}
+                subtitle={
+                  artist.genres?.length > 0
+                    ? artist.genres.slice(0, 2).join(" • ")
+                    : "Sem gêneros disponíveis"
+                }
+                meta="Artista mais ouvido"
+                badge={`#${index + 1}`}
+                extra={
+                  <div className="flex flex-wrap gap-2">
+                    {(artist.genres || []).slice(0, 3).map((genre) => (
+                      <span
+                        key={genre}
+                        className="rounded-full border border-white/10 bg-white/8 px-2.5 py-1 text-[11px] text-white/70"
+                      >
+                        {genre}
+                      </span>
+                    ))}
+                  </div>
+                }
+              />
             </SectionCard>
           ))}
         </div>
       ) : (
-        <p>Ainda nao ha dados suficientes para mostrar seus top artistas.</p>
+        <p className="text-white/60">
+          Ainda não há dados suficientes para mostrar seus top artistas.
+        </p>
       )}
-    </div>
+    </section>
   );
 }

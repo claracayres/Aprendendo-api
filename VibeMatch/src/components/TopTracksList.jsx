@@ -1,51 +1,35 @@
 import SectionCard from "./SectionCard";
+import MediaItemCard from "./MediaItemCard";
 
 export default function TopTracksList({ topTracks }) {
   return (
-    <div style={{ marginBottom: "40px" }}>
-      <h2>Top Músicas</h2>
+    <section className="mb-12">
+      <div className="mb-5">
+        <p className="text-xs uppercase tracking-[0.2em] text-white/40">
+          Mais tocadas
+        </p>
+        <h2 className="text-2xl font-bold text-white">Top músicas</h2>
+      </div>
 
       {topTracks.length > 0 ? (
-        <div>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {topTracks.map((track, index) => (
             <SectionCard key={track.id}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                }}
-              >
-                {track.album?.images?.[0] && (
-                  <img
-                    src={track.album.images[0].url}
-                    alt={track.name}
-                    width="60"
-                    height="60"
-                    style={{ borderRadius: "8px", objectFit: "cover" }}
-                  />
-                )}
-
-                <div>
-                  <p style={{ margin: 0 }}>
-                    <strong>
-                      {index + 1}. {track.name}
-                    </strong>
-                  </p>
-                  <p style={{ margin: "4px 0" }}>
-                    {track.artists?.map((artist) => artist.name).join(", ")}
-                  </p>
-                  <p style={{ margin: 0, fontSize: "14px", color: "#555" }}>
-                    {track.album?.name}
-                  </p>
-                </div>
-              </div>
+              <MediaItemCard
+                image={track.album?.images?.[0]?.url}
+                title={track.name}
+                subtitle={track.artists?.map((artist) => artist.name).join(", ")}
+                meta={track.album?.name}
+                badge={`#${index + 1}`}
+              />
             </SectionCard>
           ))}
         </div>
       ) : (
-        <p>Ainda não há dados suficientes para mostrar suas top músicas.</p>
+        <p className="text-white/60">
+          Ainda não há dados suficientes para mostrar suas top músicas.
+        </p>
       )}
-    </div>
+    </section>
   );
 }
