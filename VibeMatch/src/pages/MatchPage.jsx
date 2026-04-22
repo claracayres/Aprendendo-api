@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { getSharedProfileById } from "../services/shareProfile";
+import { getSharedProfileById } from "../services/shareprofile";
 import { calculateMatchScore } from "../utils/match";
 
 export default function MatchPage() {

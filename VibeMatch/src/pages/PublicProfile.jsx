@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { getSharedProfileById } from "../services/shareProfile";
+import { getSharedProfileById } from "../services/shareprofile";
 
 export default function PublicProfile() {
   const { shareId } = useParams();
