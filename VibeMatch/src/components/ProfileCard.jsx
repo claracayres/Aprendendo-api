@@ -1,95 +1,88 @@
 export default function ProfileCard({ user }) {
   if (!user) return null;
 
-  return (
-    <section className="mb-10">
-      <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-white/5 p-6 shadow-[0_8px_30px_rgba(0,0,0,0.25)] backdrop-blur-xl md:p-8">
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent" />
-        <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-accent/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-20 -left-10 h-40 w-40 rounded-full bg-primary/20 blur-3xl" />
+  const image = user.images?.[0]?.url;
+  const name = user.display_name || "Spotify User";
 
-        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-            <div className="shrink-0">
-              {user.images?.[0] ? (
+  return (
+    <section className="h-full">
+      <div className="relative h-full overflow-hidden rounded-[28px] border border-white/10 bg-[#101216] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl md:p-7">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-green-500/18 via-white/[0.03] to-purple-500/12" />
+        <div className="pointer-events-none absolute -left-16 -top-16 h-52 w-52 rounded-full bg-green-500/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 right-0 h-52 w-52 rounded-full bg-purple-500/20 blur-3xl" />
+
+        <div className="relative z-10 flex h-full flex-col justify-between gap-8">
+          <div className="flex flex-col gap-6 sm:items-center">
+            <div className="relative shrink-0">
+              <div className="absolute inset-0 rounded-full bg-green-400/30 blur-xl" />
+
+              {image ? (
                 <img
-                  src={user.images[0].url}
-                  alt={user.display_name}
-                  className="h-24 w-24 rounded-full border border-white/15 object-cover shadow-lg md:h-28 md:w-28"
+                  src={image}
+                  alt={name}
+                  className="relative h-24 w-24 rounded-full border-2 border-white/20 object-cover shadow-2xl md:h-28 md:w-28"
                 />
               ) : (
-                <div className="flex h-24 w-24 items-center justify-center rounded-full border border-white/10 bg-white/10 text-2xl font-bold text-white/80 md:h-28 md:w-28">
-                  {user.display_name?.[0] || "?"}
+                <div className="relative flex h-24 w-24 items-center justify-center rounded-full border-2 border-white/20 bg-white/10 text-3xl font-black text-white md:h-28 md:w-28">
+                  {name[0]}
                 </div>
               )}
             </div>
 
-            <div>
-              <p className="text-xs uppercase tracking-[0.24em] text-white/40">
+            <div className="min-w-0">
+              <p className="text-xs uppercase tracking-[0.28em] text-green-300/70">
                 Perfil Spotify
               </p>
 
-              <h2 className="mt-2 text-2xl font-bold text-white md:text-3xl">
-                {user.display_name}
+              <h2 className="mt-2 truncate text-3xl font-black tracking-tight text-white md:text-4xl">
+                {name}
               </h2>
 
-              <p className="mt-2 max-w-xl text-sm leading-6 text-white/65 md:text-base">
-                Seu perfil musical conectado ao VibeMatch. Aqui começa a leitura
-                da sua vibe, compatibilidade e identidade sonora.
+              <p className="mt-3 max-w-md text-sm leading-6 text-white/65">
+                Seu perfil musical conectado ao VibeMatch. Aqui começa sua
+                leitura de vibe, identidade sonora e compatibilidade musical.
               </p>
-
-              <div className="mt-4 flex flex-wrap gap-2">
-                {user.email && (
-                  <span className="rounded-full border border-white/10 bg-white/8 px-3 py-1.5 text-xs text-white/75 md:text-sm">
-                    {user.email}
-                  </span>
-                )}
-
-                {user.country && (
-                  <span className="rounded-full border border-white/10 bg-white/8 px-3 py-1.5 text-xs text-white/75 md:text-sm">
-                    País: {user.country}
-                  </span>
-                )}
-
-                {user.product && (
-                  <span className="rounded-full border border-accent/20 bg-accent/15 px-3 py-1.5 text-xs font-medium text-white md:text-sm">
-                    Plano: {user.product}
-                  </span>
-                )}
-              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:w-[340px]">
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.18em] text-white/40">
-                Status
-              </p>
-              <p className="mt-2 text-sm font-semibold text-white">
-                Conectado
-              </p>
-            </div>
+          <div className="grid gap-3 grid-cols-1 lg:grid-cols-3">
+            <InfoCard label="Status" value="Conectado" />
+            <InfoCard label="Fonte" value="Spotify" />
+            <InfoCard label="Mood base" value="Musical DNA" />
+          </div>
 
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.18em] text-white/40">
-                Fonte
-              </p>
-              <p className="mt-2 text-sm font-semibold text-white">
-                Spotify
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.18em] text-white/40">
-                Mood base
-              </p>
-              <p className="mt-2 text-sm font-semibold text-white">
-                Musical DNA
-              </p>
-            </div>
+          <div className="flex flex-wrap gap-2">
+            {user.email && <Badge>{user.email}</Badge>}
+            {user.country && <Badge>País: {user.country}</Badge>}
+            {user.product && <Badge destaque>Plano: {user.product}</Badge>}
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function InfoCard({ label, value }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-black/25 p-4 transition hover:border-green-400/30 hover:bg-white/[0.06]">
+      <p className="text-[11px] uppercase tracking-[0.2em] text-white/35">
+        {label}
+      </p>
+      <p className="mt-2 text-sm font-bold text-white">{value}</p>
+    </div>
+  );
+}
+
+function Badge({ children, destaque = false }) {
+  return (
+    <span
+      className={`rounded-full border px-3 py-1.5 text-xs font-medium md:text-sm ${
+        destaque
+          ? "border-green-400/25 bg-green-400/15 text-green-200"
+          : "border-white/10 bg-white/[0.07] text-white/70"
+      }`}
+    >
+      {children}
+    </span>
   );
 }

@@ -4,7 +4,8 @@ import Dashboard from "./pages/Dashboard";
 import Callback from "./pages/Callback";
 import Footer from "./components/Footer";
 import PublicProfile from "./pages/PublicProfile";
-import MatchPage from "./pages/MatchPage";
+
+
 
 export default function App() {
   return (
@@ -14,7 +15,7 @@ export default function App() {
         <Route path="/callback" element={<Callback />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/u/:shareId" element={<PublicProfile />} />
-        <Route path="/match/:shareId" element={<MatchPage />} />
+        <Route path="/:username" element={<PublicProfile />} />
       </Routes>
       <Footer />
     </BrowserRouter>

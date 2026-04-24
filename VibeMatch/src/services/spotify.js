@@ -109,10 +109,18 @@ export async function fetchTopTracks() {
 }
 
 export async function fetchTopArtists() {
-  const data = await fetchSpotifyResource(
+  const token = await getValidAccessToken();
+  const response = await spotifyFetch(
     "https://api.spotify.com/v1/me/top/artists?limit=15&time_range=medium_term",
-    "Erro ao buscar top artistas",
+    token,
   );
+  const data = await parseResponseBody(response);
+
+  if (!response.ok) {
+    throw new Error(
+      getResponseErrorMessage(response, data, "Erro ao buscar top artistas"),
+    );
+  }
 
   return {
     items: Array.isArray(data?.items) ? data.items : [],

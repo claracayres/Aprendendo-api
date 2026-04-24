@@ -1,6 +1,7 @@
 import { supabase } from "./supabase";
 
 export async function createOrGetShareProfile(userId, profileData) {
+  // tenta buscar perfil existente
   const { data: existing, error: fetchError } = await supabase
     .from("public_profiles")
     .select("*")
@@ -12,6 +13,7 @@ export async function createOrGetShareProfile(userId, profileData) {
     throw new Error("Erro ao buscar perfil compartilhado.");
   }
 
+  // se já existe → atualiza e retorna o mesmo share_id
   if (existing) {
     await supabase
       .from("public_profiles")
@@ -21,6 +23,7 @@ export async function createOrGetShareProfile(userId, profileData) {
     return existing.share_id;
   }
 
+  // se não existe → cria
   const shareId = crypto.randomUUID();
 
   const { error: insertError } = await supabase
@@ -39,19 +42,4 @@ export async function createOrGetShareProfile(userId, profileData) {
   }
 
   return shareId;
-}
-
-export async function getSharedProfileById(shareId) {
-  const { data, error } = await supabase
-    .from("public_profiles")
-    .select("*")
-    .eq("share_id", shareId)
-    .maybeSingle();
-
-  if (error) {
-    console.error(error);
-    throw new Error("Erro ao buscar perfil compartilhado.");
-  }
-
-  return data?.profile_data || null;
 }
