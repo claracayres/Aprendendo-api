@@ -17,13 +17,20 @@ async function spotifyFetch(url, token, retryCount = 0) {
       const newToken = await getValidAccessToken();
       return spotifyFetch(url, newToken, retryCount + 1);
     } catch {
-      throw new Error("Sessao expirada. Faca login novamente.");
+      throw new Error("Sessão expirada. Faça login novamente.");
     }
   }
 
-  if (response.status === 429 && retryCount < 2) {
+  if (response.status === 429 && retryCount < 5) {
     const retryAfter = response.headers.get("Retry-After");
-    const waitSeconds = retryAfter ? Number(retryAfter) : 2;
+
+    const waitSeconds = retryAfter
+      ? Number(retryAfter)
+      : Math.min(2 ** retryCount * 3, 30);
+
+    console.warn(
+      `Rate limit do Spotify. Tentando de novo em ${waitSeconds}s...`,
+    );
 
     await delay(waitSeconds * 1000);
 
@@ -37,9 +44,7 @@ async function spotifyFetch(url, token, retryCount = 0) {
 async function parseResponseBody(response) {
   const text = await response.text();
 
-  if (!text) {
-    return null;
-  }
+  if (!text) return null;
 
   try {
     return JSON.parse(text);
@@ -49,8 +54,15 @@ async function parseResponseBody(response) {
 }
 
 function getResponseErrorMessage(response, data, fallbackMessage) {
-  if (response.status === 403 && data?.error?.message === "Insufficient client scope") {
-    return "Seu login do Spotify nao tem todas as permissoes necessarias. Saia da conta e entre novamente.";
+  if (
+    response.status === 403 &&
+    data?.error?.message === "Insufficient client scope"
+  ) {
+    return "Seu login do Spotify não tem todas as permissões necessárias. Saia da conta e entre novamente.";
+  }
+
+  if (response.status === 429) {
+    return "O Spotify limitou as requisições por excesso de acessos. Aguarde alguns minutos e tente novamente.";
   }
 
   if (data?.error?.message) {
@@ -62,7 +74,10 @@ function getResponseErrorMessage(response, data, fallbackMessage) {
   }
 
   if (data?.rawText) {
-    return `${fallbackMessage} (status ${response.status}): ${data.rawText.slice(0, 120)}`;
+    return `${fallbackMessage} (status ${response.status}): ${data.rawText.slice(
+      0,
+      120,
+    )}`;
   }
 
   return `${fallbackMessage} (status ${response.status})`;
@@ -83,14 +98,14 @@ async function fetchSpotifyResource(url, fallbackMessage) {
 export async function fetchSpotifyProfile() {
   return fetchSpotifyResource(
     "https://api.spotify.com/v1/me",
-    "Erro ao buscar perfil do usuario",
+    "Erro ao buscar perfil do usuário",
   );
 }
 
 export async function fetchRecentlyPlayed() {
   return fetchSpotifyResource(
     "https://api.spotify.com/v1/me/player/recently-played?limit=15",
-    "Erro ao buscar musicas recentes",
+    "Erro ao buscar músicas recentes",
   );
 }
 
@@ -104,23 +119,15 @@ export async function fetchMyPlaylists() {
 export async function fetchTopTracks() {
   return fetchSpotifyResource(
     "https://api.spotify.com/v1/me/top/tracks?limit=15&time_range=medium_term",
-    "Erro ao buscar top musicas",
+    "Erro ao buscar top músicas",
   );
 }
 
 export async function fetchTopArtists() {
-  const token = await getValidAccessToken();
-  const response = await spotifyFetch(
+  const data = await fetchSpotifyResource(
     "https://api.spotify.com/v1/me/top/artists?limit=15&time_range=medium_term",
-    token,
+    "Erro ao buscar top artistas",
   );
-  const data = await parseResponseBody(response);
-
-  if (!response.ok) {
-    throw new Error(
-      getResponseErrorMessage(response, data, "Erro ao buscar top artistas"),
-    );
-  }
 
   return {
     items: Array.isArray(data?.items) ? data.items : [],

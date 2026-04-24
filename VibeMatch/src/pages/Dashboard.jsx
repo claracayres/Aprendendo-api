@@ -148,7 +148,12 @@ export default function Dashboard() {
         glow: "from-pink-500/20 to-rose-500/5",
       },
     ],
-    [playlists.length, recentTracks.length, topArtists.length, topTracks.length],
+    [
+      playlists.length,
+      recentTracks.length,
+      topArtists.length,
+      topTracks.length,
+    ],
   );
 
   async function handleCopyLink() {
@@ -219,7 +224,7 @@ export default function Dashboard() {
           <div className="mt-2 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <h1 className="text-3xl font-bold tracking-tight md:text-5xl">
-                Olá, {user?.display_name || "Spotify User"}! 👋
+                Olá, {user?.display_name || "Spotify User"}!
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-white/65 md:text-base">
                 Veja seu perfil, artistas favoritos, músicas mais ouvidas,
@@ -232,7 +237,7 @@ export default function Dashboard() {
                 Link público
               </p>
               <p className="mt-1 text-sm font-medium text-green-300">
-                /{username}
+                {username}
               </p>
             </div>
           </div>

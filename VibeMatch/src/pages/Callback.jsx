@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAccessToken } from "../services/auth";
-import { fetchSpotifyProfile } from "../services/spotify";
 
 export default function Callback() {
   const navigate = useNavigate();
@@ -19,11 +18,11 @@ export default function Callback() {
         const state = params.get("state");
 
         if (error) {
-          throw new Error("Usuario negou autorizacao ou houve erro no login");
+          throw new Error("Usuário negou autorização ou houve erro no login");
         }
 
         if (!code) {
-          throw new Error("Codigo de autorizacao nao encontrado");
+          throw new Error("Código de autorização não encontrado");
         }
 
         const tokenData = await getAccessToken(code, state);
@@ -31,33 +30,32 @@ export default function Callback() {
         localStorage.setItem("spotify_access_token", tokenData.access_token);
         localStorage.setItem(
           "spotify_token_expiry",
-          Date.now() + tokenData.expires_in * 1000,
+          Date.now() + tokenData.expires_in * 1000
         );
+
         localStorage.setItem(
           "spotify_auth_scopes",
-          "user-read-private user-read-email user-read-recently-played playlist-read-private user-library-read user-top-read",
+          "user-read-private user-read-email user-read-recently-played playlist-read-private user-library-read user-top-read"
         );
 
         if (tokenData.refresh_token) {
-          localStorage.setItem(
-            "spotify_refresh_token",
-            tokenData.refresh_token,
-          );
+          localStorage.setItem("spotify_refresh_token", tokenData.refresh_token);
         }
-
-        const user = await fetchSpotifyProfile();
-        localStorage.setItem("spotify_user", JSON.stringify(user));
 
         navigate("/dashboard", { replace: true });
       } catch (error) {
         console.error(error);
         alert(error.message);
-        navigate("/");
+        navigate("/", { replace: true });
       }
     }
 
     handleCallback();
   }, [navigate]);
 
-  return <p>Conectando com Spotify...</p>;
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#07090D] text-white">
+      <p>Conectando com Spotify...</p>
+    </div>
+  );
 }

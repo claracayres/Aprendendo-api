@@ -1,7 +1,20 @@
 import { generateRandomString, generateCodeChallenge } from "../utils/pkce";
 
 const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-const redirectUri = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
+
+// Detectar ambiente automaticamente
+const isProduction =
+  import.meta.env.MODE === "production" ||
+  (window.location.hostname !== "127.0.0.1" &&
+    window.location.hostname !== "localhost" &&
+    !window.location.hostname.includes(":5173"));
+
+const devRedirectUri = "http://127.0.0.1:5173/callback";
+const prodRedirectUri =
+  import.meta.env.VITE_SPOTIFY_REDIRECT_URI_PROD ||
+  "https://vibematch.vercel.app/callback";
+
+const redirectUri = isProduction ? prodRedirectUri : devRedirectUri;
 
 const codeVerifierStorageKey = "spotify_code_verifier";
 const authStateStorageKey = "spotify_auth_state";
@@ -81,7 +94,9 @@ export async function getAccessToken(code, state) {
   if (!storedState || !state || state !== storedState) {
     clearPkceStorage();
     clearStoredSession();
-    throw new Error("Nao foi possivel validar o login do Spotify. Tente novamente.");
+    throw new Error(
+      "Nao foi possivel validar o login do Spotify. Tente novamente.",
+    );
   }
 
   const body = new URLSearchParams({
