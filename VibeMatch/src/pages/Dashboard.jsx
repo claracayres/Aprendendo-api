@@ -55,6 +55,7 @@ export default function Dashboard() {
           fetchTopArtists(),
           fetchTopTracks(),
         ]);
+        localStorage.setItem("spotify_user", JSON.stringify(userData));
 
         if (!isMounted) return;
 
@@ -197,14 +198,6 @@ export default function Dashboard() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-green-500/20 bg-white/5 px-4 py-3 backdrop-blur-xl">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-white/40">
-                Link público
-              </p>
-              <p className="mt-1 text-sm font-medium text-green-300">
-                {username}
-              </p>
-            </div>
           </div>
         </section>
 
