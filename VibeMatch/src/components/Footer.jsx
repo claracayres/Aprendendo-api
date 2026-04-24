@@ -5,7 +5,7 @@ export default function Footer() {
   const navigate = useNavigate();
 
   return (
-    <footer className="border-t border-white/10 bg-[#070816]">
+    <footer className="border-t border-white/10 bg-[#07090D]">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-10 md:flex-row md:items-center md:justify-between">
         <div className="max-w-sm">
           <button
@@ -42,7 +42,7 @@ export default function Footer() {
         <div className="text-sm text-zinc-500 md:text-right">
           <p>© 2026 VibeMatch</p>
           <p className="mt-2 flex items-center gap-1 md:justify-end">
-            Feito com <Heart size={14} className="fill-pink-500 text-pink-500" /> e música
+            Todos os direitos reservados.
           </p>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   fetchSpotifyProfile,
   fetchRecentlyPlayed,
@@ -120,41 +120,6 @@ export default function Dashboard() {
       isMounted = false;
     };
   }, [user, username, topArtists, topTracks, recentTracks, playlists]);
-
-  const stats = useMemo(
-    () => [
-      {
-        title: "Top artistas",
-        value: topArtists.length,
-        subtitle: "artistas",
-        glow: "from-green-500/20 to-emerald-500/5",
-      },
-      {
-        title: "Top músicas",
-        value: topTracks.length,
-        subtitle: "músicas",
-        glow: "from-violet-500/20 to-fuchsia-500/5",
-      },
-      {
-        title: "Recentes",
-        value: recentTracks.length,
-        subtitle: "ouvidas recentemente",
-        glow: "from-amber-500/20 to-orange-500/5",
-      },
-      {
-        title: "Playlists",
-        value: playlists.length,
-        subtitle: "playlists criadas",
-        glow: "from-pink-500/20 to-rose-500/5",
-      },
-    ],
-    [
-      playlists.length,
-      recentTracks.length,
-      topArtists.length,
-      topTracks.length,
-    ],
-  );
 
   async function handleCopyLink() {
     if (!shareUrl) return;
@@ -306,19 +271,30 @@ export default function Dashboard() {
           </div>
         </section>
 
-        <section className="mb-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {stats.map((item) => (
-            <div
-              key={item.title}
-              className={`rounded-[24px] border border-white/10 bg-gradient-to-br ${item.glow} p-5 backdrop-blur-xl`}
-            >
-              <p className="text-sm text-white/55">{item.title}</p>
-              <p className="mt-2 text-4xl font-bold tracking-tight">
-                {item.value}
-              </p>
-              <p className="mt-1 text-sm text-white/55">{item.subtitle}</p>
+        <section className="mb-6">
+          <div className="rounded-[28px] border border-white/10 bg-gradient-to-br from-[#5227FF]/20 via-[#FF9FFC]/10 to-[#7cff67]/10 p-6 backdrop-blur-xl">
+            <p className="text-xs uppercase tracking-[0.2em] text-white/50">
+              Seu mood
+            </p>
+
+            <h2 className="mt-2 text-2xl font-bold">Sua vibe da semana 🎧</h2>
+
+            <p className="mt-3 text-white/70">
+              Baseado nas suas músicas recentes, você está mais:
+            </p>
+
+            <div className="mt-5 flex flex-wrap gap-3">
+              <span className="rounded-full bg-white/10 px-4 py-2 text-sm">
+                🔥 Energético
+              </span>
+              <span className="rounded-full bg-white/10 px-4 py-2 text-sm">
+                💔 Sad vibes
+              </span>
+              <span className="rounded-full bg-white/10 px-4 py-2 text-sm">
+                🌙 Chill
+              </span>
             </div>
-          ))}
+          </div>
         </section>
 
         <section className="grid gap-5 xl:grid-cols-2">
