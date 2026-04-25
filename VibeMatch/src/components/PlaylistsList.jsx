@@ -15,7 +15,6 @@ export default function PlaylistsList({ playlists }) {
           <div className="grid grid-cols-[56px_minmax(0,1fr)_auto_auto] gap-4 border-b border-white/5 px-5 py-3 text-xs uppercase tracking-[0.18em] text-white/35">
             <span></span>
             <span>Playlist</span>
-            <span>Músicas</span>
             <span>Criador</span>
           </div>
 
@@ -43,10 +42,6 @@ export default function PlaylistsList({ playlists }) {
                     Playlist salva na sua biblioteca
                   </p>
                 </div>
-
-                <span className="text-sm text-white/70">
-                  {playlist?.tracks?.total ?? 0}
-                </span>
 
                 <span className="max-w-[140px] truncate text-sm text-white/55">
                   {playlist?.owner?.display_name || "Desconhecido"}

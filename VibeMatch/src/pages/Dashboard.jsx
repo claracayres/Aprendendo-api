@@ -7,6 +7,7 @@ import {
   fetchTopTracks,
 } from "../services/spotify";
 import { createOrGetShareProfile } from "../services/shareprofile";
+import { useNavigate } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
 import ProfileCard from "../components/ProfileCard";
@@ -15,7 +16,8 @@ import TopTracksList from "../components/TopTracksList";
 import RecentTracksList from "../components/RecentTracksList";
 import PlaylistsList from "../components/PlaylistsList";
 import ProfileQrCode from "../components/ProfileQrCode";
-
+import MatchPage from "./Match";
+import { Navigate } from "react-router-dom";
 function createUsername(name = "") {
   return name
     .toLowerCase()
@@ -34,6 +36,7 @@ export default function Dashboard() {
   const [loadingQR, setLoadingQR] = useState(true);
   const [error, setError] = useState("");
   const [shareUrl, setShareUrl] = useState("");
+  const navigate = useNavigate();
 
   const username = createUsername(user?.display_name || "spotifyuser");
 
@@ -89,6 +92,15 @@ export default function Dashboard() {
       try {
         setLoadingQR(true);
 
+        const uniqueRecentTracks = [
+          ...new Map(
+            recentTracks
+              .map((item) => item.track)
+              .filter(Boolean)
+              .map((track) => [track.id, track]),
+          ).values(),
+        ];
+
         const profileData = {
           spotify_user_id: user.id,
           username,
@@ -97,9 +109,11 @@ export default function Dashboard() {
           product: user?.product || "",
           email: user?.email || "",
           image: user?.images?.[0]?.url || "",
-          topArtists: topArtists.slice(0, 5),
-          topTracks: topTracks.slice(0, 5),
-          recentTracks: recentTracks.slice(0, 5).map((item) => item.track),
+
+          topArtists: topArtists.slice(0, 20),
+          topTracks: topTracks.slice(0, 20),
+          recentTracks: uniqueRecentTracks.slice(0, 20),
+
           playlists: playlists.slice(0, 5),
         };
 
@@ -197,7 +211,6 @@ export default function Dashboard() {
                 playlists e atividade recente em um só lugar.
               </p>
             </div>
-
           </div>
         </section>
 
@@ -245,10 +258,10 @@ export default function Dashboard() {
                     </button>
 
                     <button
-                      disabled
-                      className="w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 font-medium text-white/50"
+                      onClick={() => navigate("/match")}
+                      className="w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-3 font-medium text-white/50 cursor-pointer transition hover:bg-white/10"
                     >
-                      Match em breve
+                      Ir para Match
                     </button>
                   </div>
 

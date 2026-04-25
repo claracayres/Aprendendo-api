@@ -4,8 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import Callback from "./pages/Callback";
 import Footer from "./components/Footer";
 import PublicProfile from "./pages/PublicProfile";
-
-
+import Match from "./pages/Match";
 
 export default function App() {
   return (
@@ -14,6 +13,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/callback" element={<Callback />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/match" element={<Match />} />
         <Route path="/u/:shareId" element={<PublicProfile />} />
         <Route path="/:username" element={<PublicProfile />} />
       </Routes>

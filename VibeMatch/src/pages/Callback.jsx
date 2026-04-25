@@ -5,7 +5,13 @@ import { getAccessToken } from "../services/auth";
 export default function Callback() {
   const navigate = useNavigate();
   const hasRun = useRef(false);
-
+  const returnTo = localStorage.getItem("spotify_return_to");
+  if (returnTo) {
+    localStorage.removeItem("spotify_return_to");
+    navigate(returnTo, { replace: true });
+  } else {
+    navigate("/dashboard", { replace: true });
+  }
   useEffect(() => {
     if (hasRun.current) return;
     hasRun.current = true;
@@ -30,16 +36,19 @@ export default function Callback() {
         localStorage.setItem("spotify_access_token", tokenData.access_token);
         localStorage.setItem(
           "spotify_token_expiry",
-          Date.now() + tokenData.expires_in * 1000
+          Date.now() + tokenData.expires_in * 1000,
         );
 
         localStorage.setItem(
           "spotify_auth_scopes",
-          "user-read-private user-read-email user-read-recently-played playlist-read-private user-library-read user-top-read"
+          "user-read-private user-read-email user-read-recently-played playlist-read-private user-library-read user-top-read",
         );
 
         if (tokenData.refresh_token) {
-          localStorage.setItem("spotify_refresh_token", tokenData.refresh_token);
+          localStorage.setItem(
+            "spotify_refresh_token",
+            tokenData.refresh_token,
+          );
         }
 
         navigate("/dashboard", { replace: true });

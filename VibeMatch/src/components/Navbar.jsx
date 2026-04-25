@@ -32,7 +32,12 @@ export default function Navbar() {
               Dashboard
             </button>
 
-            <button className="hover:text-white transition">Matches</button>
+            <button
+              onClick={() => navigate("/match")}
+              className="hover:text-white transition"
+            >
+              Matches
+            </button>
 
             <button className="hover:text-white transition">Mood</button>
 

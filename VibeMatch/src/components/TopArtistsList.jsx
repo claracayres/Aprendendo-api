@@ -12,7 +12,7 @@ export default function TopArtistsList({ topArtists }) {
 
       {topArtists.length > 0 ? (
         <div className="overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.03]">
-          <div className="grid grid-cols-[32px_56px_minmax(0,1fr)_auto] gap-4 border-b border-white/5 px-5 py-3 text-xs uppercase tracking-[0.18em] text-white/35">
+          <div className="grid grid-cols-[32px_56px_minmax(0,1fr)_auto] gap-2 lg:gap-4 border-b border-white/5 px-5 py-3 text-xs uppercase tracking-[0.18em] text-white/35">
             <span>#</span>
             <span></span>
             <span>Artista</span>
@@ -23,11 +23,13 @@ export default function TopArtistsList({ topArtists }) {
             {topArtists.map((artist, index) => (
               <div
                 key={artist.id}
-                className="grid grid-cols-[32px_56px_minmax(0,1fr)_auto] items-center gap-4 px-5 py-4 transition hover:bg-white/[0.04]"
+                className="grid grid-cols-[32px_56px_minmax(0,1fr)_auto] items-center gap-1 md:gap-4 px-5 py-4 transition hover:bg-white/[0.04]"
               >
-                <span className="text-sm text-white/45">{index + 1}</span>
+                <span className="text-xs md:text-sm text-white/45">
+                  {index + 1}
+                </span>
 
-                <div className="h-14 w-14 overflow-hidden rounded-full bg-white/10">
+                <div className="h-10 w-10 lg:h-14 lg:w-14 overflow-hidden rounded-full bg-white/10">
                   {artist?.images?.[0]?.url ? (
                     <img
                       src={artist.images[0].url}
@@ -38,19 +40,31 @@ export default function TopArtistsList({ topArtists }) {
                 </div>
 
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-white">
+                  <p className="truncate text-xs md:text-sm font-semibold text-white">
                     {artist.name}
                   </p>
-                  <p className="truncate text-sm text-white/55">
+                  <p className="truncate hidden md:block text-xs md:text-sm text-white/55">
                     Artista mais ouvido
                   </p>
                 </div>
 
                 <div className="max-w-55 text-right">
-                  <p className="truncate text-sm text-white/65">
-                    {artist.genres?.length > 0
-                      ? artist.genres.slice(0, 3).join(" • ").toUpperCase()
-                      : "Sem gêneros"}
+                  <p className="truncate text-xs text-white/65">
+                    {artist.genres?.length > 0 ? (
+                      <>
+                        <span className="md:hidden">
+                          {artist.genres.slice(0, 1).join("").toUpperCase()}
+                        </span>
+                        <span className="hidden md:inline lg:hidden">
+                          {artist.genres.slice(0, 2).join(" • ").toUpperCase()}
+                        </span>
+                        <span className="hidden lg:inline">
+                          {artist.genres.slice(0, 3).join(" • ").toUpperCase()}
+                        </span>
+                      </>
+                    ) : (
+                      "Sem gêneros"
+                    )}
                   </p>
                 </div>
               </div>

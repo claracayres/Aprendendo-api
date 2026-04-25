@@ -55,3 +55,39 @@ export async function getSharedProfileById(shareId) {
 
   return data?.profile_data || null;
 }
+
+export async function getSharedProfileByShareId(shareId) {
+  const { data, error } = await supabase
+    .from("public_profiles")
+    .select("*")
+    .eq("share_id", shareId)
+    .maybeSingle();
+
+  if (error) throw new Error("Erro ao buscar perfil.");
+  return data ? { ...data.profile_data, shareId: data.share_id } : null;
+}
+
+export async function getSharedProfileByUsername(username) {
+  const { data, error } = await supabase
+    .from("public_profiles")
+    .select("*")
+    .eq("profile_data->>username", username)
+    .maybeSingle();
+
+  if (error) throw new Error("Erro ao buscar perfil.");
+  return data ? { ...data.profile_data, shareId: data.share_id } : null;
+}
+
+export async function getMySharedProfile() {
+  const user = JSON.parse(localStorage.getItem("spotify_user"));
+  if (!user?.id) return null;
+
+  const { data, error } = await supabase
+    .from("public_profiles")
+    .select("*")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (error) return null;
+  return data ? { ...data.profile_data, shareId: data.share_id } : null;
+}
