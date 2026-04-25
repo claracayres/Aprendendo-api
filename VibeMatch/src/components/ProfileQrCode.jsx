@@ -50,12 +50,13 @@ export default function ProfileQrCode({ shareUrl, username = "clarinha" }) {
               {shortLink}
             </p>
 
-            <div className="mt-6 flex justify-center rounded-[28px] border border-white/10 bg-black/35 p-6">
+            <div className="mt-6 flex justify-center rounded-[28px] border border-white/10 bg-white p-6">
               <QRCode
                 value={shareUrl}
                 size={180}
-                bgColor="transparent"
-                fgColor="#ffffff"
+                bgColor="#ffffff"
+                fgColor="#000000"
+                level="H"
               />
             </div>
           </div>
