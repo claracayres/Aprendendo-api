@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   fetchSpotifyProfile,
   fetchRecentlyPlayed,
-  fetchMyPlaylists,
   fetchTopArtists,
   fetchTopTracks,
 } from "../services/spotify";
@@ -45,28 +44,23 @@ export default function Dashboard() {
 
     async function loadSpotifyData() {
       try {
-        const [
-          userData,
-          recentData,
-          playlistsData,
-          topArtistsData,
-          topTracksData,
-        ] = await Promise.all([
-          fetchSpotifyProfile(),
-          fetchRecentlyPlayed(),
-          fetchMyPlaylists(),
-          fetchTopArtists(),
-          fetchTopTracks(),
-        ]);
+        const [userData, recentData, topArtistsData, topTracksData] =
+          await Promise.all([
+            fetchSpotifyProfile(),
+            fetchRecentlyPlayed(),
+            fetchTopArtists(),
+            fetchTopTracks(),
+          ]);
+
         localStorage.setItem("spotify_user", JSON.stringify(userData));
 
         if (!isMounted) return;
 
         setUser(userData);
         setRecentTracks(recentData?.items || []);
-        setPlaylists(playlistsData?.items || []);
         setTopArtists(topArtistsData?.items || []);
         setTopTracks(topTracksData?.items || []);
+        setPlaylists([]);
       } catch (err) {
         if (!isMounted) return;
         console.error("ERRO NO DASHBOARD:", err);
@@ -114,7 +108,7 @@ export default function Dashboard() {
           topTracks: topTracks.slice(0, 20),
           recentTracks: uniqueRecentTracks.slice(0, 20),
 
-          playlists: playlists.slice(0, 5),
+          playlists: [],
         };
 
         await createOrGetShareProfile(user.id, profileData);
